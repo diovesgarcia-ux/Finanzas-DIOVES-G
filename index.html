@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<!-- saved from url=(0081)file:///Users/diovesgarciasanmartin/Downloads/control-financiero-quincenal_7.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control Financiero Quincenal</title>
+<link href="./Control Financiero Quincenal_files/css2" rel="stylesheet">
+<script src="./Control Financiero Quincenal_files/chart.umd.js"></script>
+<style>
+:root {
+  --bg:#f5f4f0; --surface:#fff; --surface2:#f0efe9;
+  --border:rgba(0,0,0,0.1); --border2:rgba(0,0,0,0.18);
+  --text:#1a1a18; --text2:#6b6b65; --text3:#9e9e98;
+  --green:#2d6a2d; --green-bg:#eaf4e0;
+  --red:#9b2a2a;   --red-bg:#fceaea;
+  --blue:#1a4f8a;  --blue-bg:#e6f0fb;
+  --amber:#7a4a08; --amber-bg:#fef3dc;
+  --r:10px; --rl:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* TOPBAR */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100;}
+.topbar-logo{font-size:17px;font-weight:600;letter-spacing:-.3px;display:flex;align-items:center;gap:8px;}
+.logo-dot{width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block;}
+.export-bar{display:flex;gap:8px;}
+
+/* LAYOUT */
+.layout{display:flex;min-height:calc(100vh - 60px);}
+.sidebar{width:210px;background:var(--surface);border-right:1px solid var(--border);padding:1.5rem 0;flex-shrink:0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;}
+.sidebar-section{padding:0 1rem;margin-bottom:1.5rem;}
+.sidebar-label{font-size:10px;font-weight:600;letter-spacing:1px;color:var(--text3);text-transform:uppercase;padding:0 .5rem;margin-bottom:6px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:14px;color:var(--text2);transition:all .15s;border:none;background:none;width:100%;text-align:left;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:var(--text);color:#fff;}
+.nav-icon{font-size:16px;width:18px;}
+.main{flex:1;padding:2rem;max-width:960px;}
+
+/* PAGES */
+.page{display:none;} .page.active{display:block;}
+.page-title{font-size:22px;font-weight:600;letter-spacing:-.5px;margin-bottom:.25rem;}
+.page-sub{font-size:14px;color:var(--text2);margin-bottom:1.75rem;}
+.period-row{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;flex-wrap:wrap;}
+.period-row label{font-size:13px;color:var(--text2);}
+
+/* METRICS */
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:1.75rem;}
+.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:1rem 1.25rem;}
+.metric-card .mlabel{font-size:12px;color:var(--text2);margin-bottom:6px;}
+.metric-card .mval{font-size:21px;font-weight:600;letter-spacing:-.5px;font-family:'DM Mono',monospace;}
+.mval.g{color:var(--green);} .mval.r{color:var(--red);} .mval.b{color:var(--blue);} .mval.a{color:var(--amber);}
+.progress-wrap{margin-top:6px;}
+.progress-track{background:var(--surface2);border-radius:4px;height:6px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:4px;transition:width .4s;}
+
+/* CARDS */
+.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+@media(max-width:680px){.card-grid{grid-template-columns:1fr;}.sidebar{display:none;}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem;}
+.card-title{font-size:14px;font-weight:500;margin-bottom:1rem;color:var(--text2);}
+
+/* FORM */
+.form-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:1rem;}
+.form-title{font-size:14px;font-weight:500;margin-bottom:1rem;}
+.form-row{display:grid;gap:10px;margin-bottom:10px;}
+.form-row.c2{grid-template-columns:1fr 1fr;}
+.form-row.c3{grid-template-columns:1fr 1fr 1fr;}
+@media(max-width:580px){.form-row.c3{grid-template-columns:1fr 1fr;}}
+.field label{font-size:12px;color:var(--text2);display:block;margin-bottom:5px;font-weight:500;}
+input[type=text],input[type=number],input[type=date],select{width:100%;padding:8px 12px;font-size:14px;font-family:'DM Sans',sans-serif;border:1px solid var(--border2);border-radius:8px;background:var(--surface);color:var(--text);transition:border-color .15s;}
+input:focus,select:focus{outline:none;border-color:#1a4f8a;}
+.ac-hint{font-size:11px;color:var(--text3);margin-top:4px;display:block;}
+
+/* AUTOCOMPLETE */
+.ac-wrap{position:relative;}
+.ac-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:300;background:var(--surface);border:1px solid var(--border2);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.13);max-height:220px;overflow-y:auto;display:none;}
+.ac-dropdown.open{display:block;}
+.ac-item{padding:9px 14px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:space-between;border-bottom:.5px solid var(--border);gap:12px;}
+.ac-item:last-child{border-bottom:none;}
+.ac-item:hover,.ac-item.focused{background:var(--surface2);}
+.ac-item-name{font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ac-item-meta{font-size:12px;color:var(--text3);white-space:nowrap;font-family:'DM Mono',monospace;}
+.ac-item-cat{font-size:11px;padding:1px 6px;border-radius:5px;background:var(--surface2);color:var(--text2);white-space:nowrap;}
+
+/* BUTTONS */
+.btn{padding:8px 16px;border:1px solid var(--border2);border-radius:8px;background:transparent;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);display:inline-flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap;}
+.btn:hover{background:var(--surface2);}
+.btn.primary{background:var(--text);color:#fff;border-color:var(--text);}
+.btn.primary:hover{opacity:.85;}
+.btn.sm{padding:4px 10px;font-size:12px;}
+.btn.danger{color:var(--red);border-color:transparent;}
+.btn.danger:hover{background:var(--red-bg);}
+.btn.check{color:var(--green);border-color:var(--green);background:var(--green-bg);}
+.btn.check:hover{background:#d4edda;}
+.btn.unpay{color:var(--text2);border-color:transparent;font-size:11px;}
+.btn.unpay:hover{background:var(--surface2);}
+.btn.aplazar{color:#7a4a08;border-color:#d68910;background:var(--amber-bg);}
+.btn.aplazar:hover{background:#fde8b0;}
+.btn.undo-apl{color:#7a4a08;border-color:#d68910;font-size:11px;}
+.btn.undo-apl:hover{background:var(--amber-bg);}
+.acciones{display:flex;gap:4px;align-items:center;flex-wrap:wrap;}
+
+/* LIST */
+.list-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;}
+.list-header{padding:1rem 1.25rem;border-bottom:1px solid var(--border);font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:space-between;}
+.list-item{display:flex;align-items:center;justify-content:space-between;padding:12px 1.25rem;border-bottom:1px solid var(--border);font-size:14px;transition:background .1s;}
+.list-item:last-child{border-bottom:none;}
+.list-item:hover{background:var(--surface2);}
+.list-item.pagado{background:#f0faf0;border-left:4px solid #2d6a2d;}
+.list-item.pagado .item-desc{color:var(--green);font-weight:500;}
+.list-item.pagado .amount{color:var(--green)!important;}
+.item-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.item-right{display:flex;align-items:center;gap:10px;text-align:right;flex-shrink:0;}
+.amount{font-weight:600;font-family:'DM Mono',monospace;font-size:13px;}
+
+/* BADGES */
+.badge{font-size:11px;padding:2px 8px;border-radius:6px;font-weight:500;white-space:nowrap;}
+.badge.fijo{background:var(--blue-bg);color:var(--blue);}
+.badge.variable{background:var(--amber-bg);color:var(--amber);}
+.badge.ingreso{background:var(--green-bg);color:var(--green);}
+.badge.pagado{background:var(--green-bg);color:var(--green);}
+.badge.apl-rec{background:var(--amber-bg);color:var(--amber);}
+.tag{font-size:11px;padding:2px 7px;border-radius:6px;background:var(--surface2);color:var(--text3);}
+.empty{padding:2.5rem;text-align:center;color:var(--text3);font-size:14px;}
+
+/* CHARTS */
+.chart-wrap{position:relative;width:100%;}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;font-size:12px;color:var(--text2);}
+.legend span{display:flex;align-items:center;gap:5px;}
+.legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo"><span class="logo-dot"></span> Control Financiero Quincenal</div>
+  <div class="export-bar">
+    <button class="btn sm" onclick="exportarCSV()">⬇ Exportar CSV</button>
+    <button class="btn sm primary" onclick="guardarLocal(); toast(&#39;💾 Guardado&#39;)">💾 Guardar</button>
+  </div>
+</div>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Principal</div>
+      <button class="nav-item active" onclick="showPage(&#39;resumen&#39;,this)"><span class="nav-icon">📊</span> Resumen</button>
+      <button class="nav-item" onclick="showPage(&#39;mensual&#39;,this)"><span class="nav-icon">📅</span> Vista mensual</button>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Registros</div>
+      <button class="nav-item" onclick="showPage(&#39;ingresos&#39;,this)"><span class="nav-icon">💰</span> Ingresos</button>
+      <button class="nav-item" onclick="showPage(&#39;fijos&#39;,this)"><span class="nav-icon">🏠</span> Gastos fijos</button>
+      <button class="nav-item" onclick="showPage(&#39;variables&#39;,this)"><span class="nav-icon">🛒</span> Gastos variables</button>
+    </div>
+  </nav>
+
+  <main class="main">
+
+    <!-- RESUMEN -->
+    <div id="page-resumen" class="page active">
+      <div class="page-title">Resumen quincenal</div>
+      <p class="page-sub">Vista general de tus finanzas en la quincena seleccionada</p>
+      <div class="period-row">
+        <label>Quincena:</label>
+        <select id="periodo-resumen" onchange="renderResumen()"><option value="2026-04-1">Abril 2026 – Q1 (1–15)</option><option value="2026-04-2">Abril 2026 – Q2 (16–30)</option><option value="2026-05-1">Mayo 2026 – Q1 (1–15)</option><option value="2026-05-2">Mayo 2026 – Q2 (16–31)</option><option value="2026-06-1">Junio 2026 – Q1 (1–15)</option><option value="2026-06-2">Junio 2026 – Q2 (16–30)</option><option value="2026-07-1">Julio 2026 – Q1 (1–15)</option><option value="2026-07-2">Julio 2026 – Q2 (16–31)</option><option value="2026-08-1">Agosto 2026 – Q1 (1–15)</option><option value="2026-08-2">Agosto 2026 – Q2 (16–31)</option><option value="2026-09-1">Sep 2026 – Q1 (1–15)</option><option value="2026-09-2">Sep 2026 – Q2 (16–30)</option><option value="2026-10-1">Oct 2026 – Q1 (1–15)</option><option value="2026-10-2">Oct 2026 – Q2 (16–31)</option><option value="2026-11-1">Nov 2026 – Q1 (1–15)</option><option value="2026-11-2">Nov 2026 – Q2 (16–30)</option><option value="2026-12-1">Dic 2026 – Q1 (1–15)</option><option value="2026-12-2">Dic 2026 – Q2 (16–31)</option></select>
+      </div>
+      <div class="metric-grid" id="metrics-resumen">
+    <div class="metric-card"><div class="mlabel">💰 Ingresos</div><div class="mval g">$4.850.000</div></div>
+    <div class="metric-card"><div class="mlabel">🏠 Gastos fijos</div><div class="mval r">$1.945.000</div></div>
+    <div class="metric-card"><div class="mlabel">🛒 Gastos variables</div><div class="mval a">$1.705.000</div></div>
+    <div class="metric-card"><div class="mlabel">💳 Saldo neto</div><div class="mval b">$1.200.000</div></div>
+    <div class="metric-card" style="grid-column:1/-1">
+      <div class="mlabel">Comprometido del ingreso — <strong style="color:#d68910">75%</strong></div>
+      <div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:75%;background:#d68910"></div></div></div>
+    </div></div>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title">Distribución de gastos</div>
+          <div class="chart-wrap" style="height:200px"><canvas id="chartDonut" role="img" aria-label="Distribución" style="box-sizing: border-box; display: block; height: 200px; width: 398px;" width="796" height="400"></canvas></div>
+          <div class="legend" id="donut-legend"><span><span class="legend-dot" style="background:#1a4f8a"></span>Fijos: $1.945.000</span><span><span class="legend-dot" style="background:#7a4a08"></span>Variables: $1.705.000</span><span><span class="legend-dot" style="background:#2d6a2d"></span>Disponible: $1.200.000</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Ingresos vs Egresos</div>
+          <div class="chart-wrap" style="height:200px"><canvas id="chartBar" role="img" aria-label="Ingresos vs egresos" style="box-sizing: border-box; display: block; height: 200px; width: 398px;" width="796" height="400"></canvas></div>
+        </div>
+      </div>
+      <div class="list-section">
+        <div class="list-header">Compromisos de pago <span id="compromiso-total" style="font-family:&#39;DM Mono&#39;;font-size:13px;">$3.650.000</span></div>
+        <div id="compromisos-list"><div class="list-item">
+      <div class="item-left">
+        <span class="badge fijo">Fijo</span>
+        
+        
+        <span class="item-desc">Copacredito</span>
+        <span class="tag">Crédito / Deuda</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$860.000</div>
+          <div style="font-size:11px;color:var(--text3)">📅 2026-05-27</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;fijo&#39;,1779926108132,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;fijo&#39;,1779926108132)">✓ Pagar</button>
+              
+        </div>
+      </div>
+    </div><div class="list-item">
+      <div class="item-left">
+        <span class="badge fijo">Fijo</span>
+        
+        
+        <span class="item-desc">Cuota diego</span>
+        <span class="tag">Otro fijo</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$650.000</div>
+          <div style="font-size:11px;color:var(--text3)">📅 2026-05-27</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;fijo&#39;,1779925358770,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;fijo&#39;,1779925358770)">✓ Pagar</button>
+              
+        </div>
+      </div>
+    </div><div class="list-item">
+      <div class="item-left">
+        <span class="badge variable">Variable</span>
+        
+        
+        <span class="item-desc">Matas</span>
+        <span class="tag">Hogar / Aseo</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$240.000</div>
+          <div style="font-size:11px;color:var(--text3)">📅 2026-05-28</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;variable&#39;,1779926142265,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;variable&#39;,1779926142265)">✓ Pagar</button>
+              
+        </div>
+      </div>
+    </div><div class="list-item">
+      <div class="item-left">
+        <span class="badge fijo">Fijo</span>
+        
+        
+        <span class="item-desc">TC NU</span>
+        <span class="tag">Crédito / Deuda</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$235.000</div>
+          <div style="font-size:11px;color:var(--text3)">📅 2026-05-28</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;fijo&#39;,1779927191916,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;fijo&#39;,1779927191916)">✓ Pagar</button>
+              
+        </div>
+      </div>
+    </div><div class="list-item">
+      <div class="item-left">
+        <span class="badge fijo">Fijo</span>
+        
+        
+        <span class="item-desc">Internet</span>
+        <span class="tag">Servicios públicos</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$130.000</div>
+          <div style="font-size:11px;color:var(--text3)">📅 2026-05-28</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;fijo&#39;,1779926184048,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;fijo&#39;,1779926184048)">✓ Pagar</button>
+              
+        </div>
+      </div>
+    </div><div class="list-item">
+      <div class="item-left">
+        <span class="badge variable">Variable</span>
+        
+        
+        <span class="item-desc">AirBNB Envigado</span>
+        <span class="tag">Otro variable</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$600.000</div>
+          <div style="font-size:11px;color:var(--text3)">📅 2026-05-29</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;variable&#39;,1779926875379,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;variable&#39;,1779926875379)">✓ Pagar</button>
+              
+        </div>
+      </div>
+    </div><div class="list-item">
+      <div class="item-left">
+        <span class="badge variable">Variable</span>
+        
+        
+        <span class="item-desc">Flacucho baldosa</span>
+        <span class="tag">Otro variable</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$500.000</div>
+          <div style="font-size:11px;color:var(--text3)">📅 2026-05-29</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;variable&#39;,1779926844263,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;variable&#39;,1779926844263)">✓ Pagar</button>
+              
+        </div>
+      </div>
+    </div><div class="list-item">
+      <div class="item-left">
+        <span class="badge variable">Variable</span>
+        
+        
+        <span class="item-desc">Herick H</span>
+        <span class="tag">Entretenimiento</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$80.000</div>
+          <div style="font-size:11px;color:var(--text3)">📅 2026-05-30</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;variable&#39;,1779932145269,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;variable&#39;,1779932145269)">✓ Pagar</button>
+              
+        </div>
+      </div>
+    </div><div class="list-item">
+      <div class="item-left">
+        <span class="badge variable">Variable</span>
+        
+        
+        <span class="item-desc">F. Castro</span>
+        <span class="tag">Ropa / Calzado</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$285.000</div>
+          <div style="font-size:11px;color:var(--text3)">📅 2026-05-30</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;variable&#39;,1779932114402,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;variable&#39;,1779932114402)">✓ Pagar</button>
+              
+        </div>
+      </div>
+    </div><div class="list-item">
+      <div class="item-left">
+        <span class="badge fijo">Fijo</span>
+        
+        
+        <span class="item-desc">Celular</span>
+        <span class="tag">Servicios públicos</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$70.000</div>
+          <div style="font-size:11px;color:var(--text3)">📅 2026-06-05</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;fijo&#39;,1779926444810,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;fijo&#39;,1779926444810)">✓ Pagar</button>
+              
+        </div>
+      </div>
+    </div></div>
+      </div>
+    </div>
+
+    <!-- INGRESOS -->
+    <div id="page-ingresos" class="page">
+      <div class="page-title">Ingresos</div>
+      <p class="page-sub">Registra tus entradas de dinero por quincena</p>
+      <div class="form-section">
+        <div class="form-title">Nuevo ingreso</div>
+        <div class="form-row c2">
+          <div class="field">
+            <label>Descripción</label>
+            <div class="ac-wrap">
+              <input type="text" id="ing-desc" placeholder="Escribe o selecciona uno guardado…" autocomplete="off" oninput="acFiltrar(&#39;ing&#39;)" onfocus="acFiltrar(&#39;ing&#39;)" onkeydown="acTecla(event,&#39;ing&#39;)">
+              <div class="ac-dropdown" id="ing-ac"><div class="ac-item" data-idx="0" onmousedown="acSeleccionar(event,&#39;ing&#39;,&#39;Salario quincena&#39;)" onmouseover="acHover(&#39;ing&#39;,0)">
+      <span class="ac-item-name">Salario quincena</span>
+      
+      <span class="ac-item-meta">$4.800.000</span>
+    </div></div>
+            </div>
+            <span class="ac-hint">💡 Selecciona uno guardado para registrarlo al instante</span>
+          </div>
+          <div class="field"><label>Monto (COP $)</label><input type="number" id="ing-monto" placeholder="0" min="0"></div>
+        </div>
+        <div class="form-row c2">
+          <div class="field"><label>Fecha de recibo</label><input type="date" id="ing-fecha"></div>
+          <div class="field"><label>Quincena</label><select id="ing-quincena"><option value="2026-04-1">Abril 2026 – Q1 (1–15)</option><option value="2026-04-2">Abril 2026 – Q2 (16–30)</option><option value="2026-05-1">Mayo 2026 – Q1 (1–15)</option><option value="2026-05-2">Mayo 2026 – Q2 (16–31)</option><option value="2026-06-1">Junio 2026 – Q1 (1–15)</option><option value="2026-06-2">Junio 2026 – Q2 (16–30)</option><option value="2026-07-1">Julio 2026 – Q1 (1–15)</option><option value="2026-07-2">Julio 2026 – Q2 (16–31)</option><option value="2026-08-1">Agosto 2026 – Q1 (1–15)</option><option value="2026-08-2">Agosto 2026 – Q2 (16–31)</option><option value="2026-09-1">Sep 2026 – Q1 (1–15)</option><option value="2026-09-2">Sep 2026 – Q2 (16–30)</option><option value="2026-10-1">Oct 2026 – Q1 (1–15)</option><option value="2026-10-2">Oct 2026 – Q2 (16–31)</option><option value="2026-11-1">Nov 2026 – Q1 (1–15)</option><option value="2026-11-2">Nov 2026 – Q2 (16–30)</option><option value="2026-12-1">Dic 2026 – Q1 (1–15)</option><option value="2026-12-2">Dic 2026 – Q2 (16–31)</option></select></div>
+        </div>
+        <button class="btn primary" onclick="agregarIngreso()">+ Agregar ingreso nuevo</button>
+      </div>
+      <div class="list-section">
+        <div class="list-header">Todos los ingresos <span id="ing-total" style="font-family:&#39;DM Mono&#39;;font-size:13px;color:var(--green);">$4.850.000</span></div>
+        <div id="ingresos-list">
+      <div class="list-item">
+        <div class="item-left">
+          <span class="badge ingreso">Ingreso</span>
+          <span>Adelanto Diego</span>
+          <span class="tag">May Q2</span>
+        </div>
+        <div class="item-right">
+          <div><div class="amount" style="color:var(--green)">$50.000</div>
+          <div style="font-size:11px;color:var(--text3)">2026-05-28</div></div>
+          <button class="btn sm danger" onclick="eliminar(&#39;ingresos&#39;,1779934378038)">🗑</button>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="item-left">
+          <span class="badge ingreso">Ingreso</span>
+          <span>Salario quincena</span>
+          <span class="tag">May Q2</span>
+        </div>
+        <div class="item-right">
+          <div><div class="amount" style="color:var(--green)">$4.800.000</div>
+          <div style="font-size:11px;color:var(--text3)">2026-05-30</div></div>
+          <button class="btn sm danger" onclick="eliminar(&#39;ingresos&#39;,1779925309520)">🗑</button>
+        </div>
+      </div></div>
+      </div>
+    </div>
+
+    <!-- GASTOS FIJOS -->
+    <div id="page-fijos" class="page">
+      <div class="page-title">Gastos fijos</div>
+      <p class="page-sub">Pagos recurrentes con fecha de compromiso</p>
+      <div class="form-section">
+        <div class="form-title">Nuevo gasto fijo</div>
+        <div class="form-row c3">
+          <div class="field">
+            <label>Descripción</label>
+            <div class="ac-wrap">
+              <input type="text" id="fijo-desc" placeholder="Escribe o selecciona uno guardado…" autocomplete="off" oninput="acFiltrar(&#39;fijo&#39;)" onfocus="acFiltrar(&#39;fijo&#39;)" onkeydown="acTecla(event,&#39;fijo&#39;)">
+              <div class="ac-dropdown" id="fijo-ac"><div class="ac-item" data-idx="0" onmousedown="acSeleccionar(event,&#39;fijo&#39;,&#39;Tarjeta bancolombia&#39;)" onmouseover="acHover(&#39;fijo&#39;,0)">
+      <span class="ac-item-name">Tarjeta bancolombia</span>
+      <span class="ac-item-cat">Crédito / Deuda</span>
+      <span class="ac-item-meta">$200.000</span>
+    </div><div class="ac-item focused" data-idx="1" onmousedown="acSeleccionar(event,&#39;fijo&#39;,&#39;Credito mama&#39;)" onmouseover="acHover(&#39;fijo&#39;,1)">
+      <span class="ac-item-name">Credito mama</span>
+      <span class="ac-item-cat">Crédito / Deuda</span>
+      <span class="ac-item-meta">$560.000</span>
+    </div><div class="ac-item" data-idx="2" onmousedown="acSeleccionar(event,&#39;fijo&#39;,&#39;TC NU&#39;)" onmouseover="acHover(&#39;fijo&#39;,2)">
+      <span class="ac-item-name">TC NU</span>
+      <span class="ac-item-cat">Crédito / Deuda</span>
+      <span class="ac-item-meta">$235.000</span>
+    </div><div class="ac-item" data-idx="3" onmousedown="acSeleccionar(event,&#39;fijo&#39;,&#39;Serfinanza&#39;)" onmouseover="acHover(&#39;fijo&#39;,3)">
+      <span class="ac-item-name">Serfinanza</span>
+      <span class="ac-item-cat">Crédito / Deuda</span>
+      <span class="ac-item-meta">$350.000</span>
+    </div><div class="ac-item" data-idx="4" onmousedown="acSeleccionar(event,&#39;fijo&#39;,&#39;Celular&#39;)" onmouseover="acHover(&#39;fijo&#39;,4)">
+      <span class="ac-item-name">Celular</span>
+      <span class="ac-item-cat">Servicios públicos</span>
+      <span class="ac-item-meta">$70.000</span>
+    </div><div class="ac-item" data-idx="5" onmousedown="acSeleccionar(event,&#39;fijo&#39;,&#39;Internet&#39;)" onmouseover="acHover(&#39;fijo&#39;,5)">
+      <span class="ac-item-name">Internet</span>
+      <span class="ac-item-cat">Servicios públicos</span>
+      <span class="ac-item-meta">$130.000</span>
+    </div><div class="ac-item" data-idx="6" onmousedown="acSeleccionar(event,&#39;fijo&#39;,&#39;Copacredito&#39;)" onmouseover="acHover(&#39;fijo&#39;,6)">
+      <span class="ac-item-name">Copacredito</span>
+      <span class="ac-item-cat">Crédito / Deuda</span>
+      <span class="ac-item-meta">$860.000</span>
+    </div><div class="ac-item" data-idx="7" onmousedown="acSeleccionar(event,&#39;fijo&#39;,&#39;Cuota diego&#39;)" onmouseover="acHover(&#39;fijo&#39;,7)">
+      <span class="ac-item-name">Cuota diego</span>
+      <span class="ac-item-cat">Otro fijo</span>
+      <span class="ac-item-meta">$650.000</span>
+    </div></div>
+            </div>
+            <span class="ac-hint">💡 Selecciona uno guardado para registrarlo al instante en la quincena elegida</span>
+          </div>
+          <div class="field"><label>Monto (COP $)</label><input type="number" id="fijo-monto" placeholder="0" min="0"></div>
+          <div class="field"><label>Fecha de vencimiento</label><input type="date" id="fijo-fecha"></div>
+        </div>
+        <div class="form-row c2">
+          <div class="field"><label>Quincena</label><select id="fijo-quincena"><option value="2026-04-1">Abril 2026 – Q1 (1–15)</option><option value="2026-04-2">Abril 2026 – Q2 (16–30)</option><option value="2026-05-1">Mayo 2026 – Q1 (1–15)</option><option value="2026-05-2">Mayo 2026 – Q2 (16–31)</option><option value="2026-06-1">Junio 2026 – Q1 (1–15)</option><option value="2026-06-2">Junio 2026 – Q2 (16–30)</option><option value="2026-07-1">Julio 2026 – Q1 (1–15)</option><option value="2026-07-2">Julio 2026 – Q2 (16–31)</option><option value="2026-08-1">Agosto 2026 – Q1 (1–15)</option><option value="2026-08-2">Agosto 2026 – Q2 (16–31)</option><option value="2026-09-1">Sep 2026 – Q1 (1–15)</option><option value="2026-09-2">Sep 2026 – Q2 (16–30)</option><option value="2026-10-1">Oct 2026 – Q1 (1–15)</option><option value="2026-10-2">Oct 2026 – Q2 (16–31)</option><option value="2026-11-1">Nov 2026 – Q1 (1–15)</option><option value="2026-11-2">Nov 2026 – Q2 (16–30)</option><option value="2026-12-1">Dic 2026 – Q1 (1–15)</option><option value="2026-12-2">Dic 2026 – Q2 (16–31)</option></select></div>
+          <div class="field"><label>Categoría</label>
+            <select id="fijo-cat">
+              <option>Arriendo / Vivienda</option><option>Servicios públicos</option>
+              <option>Crédito / Deuda</option><option>Seguro</option>
+              <option>Educación</option><option>Transporte fijo</option>
+              <option>Salud / EPS</option><option>Otro fijo</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn primary" onclick="agregarFijo()">+ Agregar gasto fijo nuevo</button>
+      </div>
+      <div class="list-section">
+        <div class="list-header">Gastos fijos registrados <span id="fijo-total" style="font-family:&#39;DM Mono&#39;;font-size:13px;color:var(--red);">$2.705.000</span></div>
+        <div id="fijos-list"><div class="list-item">
+      <div class="item-left">
+        <span class="badge fijo">Fijo</span>
+        
+        
+        <span class="item-desc">Copacredito</span>
+        <span class="tag">May Q2</span>
+        <span class="tag">Crédito / Deuda</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$860.000</div>
+          <div style="font-size:11px;color:var(--text3)">Vence: 2026-05-27</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;fijos&#39;,1779926108132,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;fijos&#39;,1779926108132)">✓ Pagar</button>
+              
+          <button class="btn sm danger" onclick="eliminar(&#39;fijos&#39;,1779926108132)">🗑</button>
+        </div>
+      </div>
+    </div><div class="list-item">
+      <div class="item-left">
+        <span class="badge fijo">Fijo</span>
+        
+        
+        <span class="item-desc">Cuota diego</span>
+        <span class="tag">May Q2</span>
+        <span class="tag">Otro fijo</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$650.000</div>
+          <div style="font-size:11px;color:var(--text3)">Vence: 2026-05-27</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;fijos&#39;,1779925358770,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;fijos&#39;,1779925358770)">✓ Pagar</button>
+              
+          <button class="btn sm danger" onclick="eliminar(&#39;fijos&#39;,1779925358770)">🗑</button>
+        </div>
+      </div>
+    </div><div class="list-item">
+      <div class="item-left">
+        <span class="badge fijo">Fijo</span>
+        
+        <span class="badge apl-rec">⏩ Aplazado</span>
+        <span class="item-desc">Credito mama</span>
+        <span class="tag">Jun Q1</span>
+        <span class="tag">Crédito / Deuda</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$560.000</div>
+          <div style="font-size:11px;color:var(--text3)">Vence: 2026-05-28</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;fijos&#39;,1779932624170,&#39;2026-06-1&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;fijos&#39;,1779932624170)">✓ Pagar</button>
+              <button class="btn sm undo-apl" onclick="deshacerAplazar(&#39;fijos&#39;,1779932624170)">↩ Deshacer aplazar</button>
+          <button class="btn sm danger" onclick="eliminar(&#39;fijos&#39;,1779932624170)">🗑</button>
+        </div>
+      </div>
+    </div><div class="list-item">
+      <div class="item-left">
+        <span class="badge fijo">Fijo</span>
+        
+        <span class="badge apl-rec">⏩ Aplazado</span>
+        <span class="item-desc">Tarjeta bancolombia</span>
+        <span class="tag">Jun Q1</span>
+        <span class="tag">Crédito / Deuda</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$200.000</div>
+          <div style="font-size:11px;color:var(--text3)">Vence: 2026-05-28</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;fijos&#39;,1779932441421,&#39;2026-06-1&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;fijos&#39;,1779932441421)">✓ Pagar</button>
+              <button class="btn sm undo-apl" onclick="deshacerAplazar(&#39;fijos&#39;,1779932441421)">↩ Deshacer aplazar</button>
+          <button class="btn sm danger" onclick="eliminar(&#39;fijos&#39;,1779932441421)">🗑</button>
+        </div>
+      </div>
+    </div><div class="list-item">
+      <div class="item-left">
+        <span class="badge fijo">Fijo</span>
+        
+        
+        <span class="item-desc">TC NU</span>
+        <span class="tag">May Q2</span>
+        <span class="tag">Crédito / Deuda</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$235.000</div>
+          <div style="font-size:11px;color:var(--text3)">Vence: 2026-05-28</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;fijos&#39;,1779927191916,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;fijos&#39;,1779927191916)">✓ Pagar</button>
+              
+          <button class="btn sm danger" onclick="eliminar(&#39;fijos&#39;,1779927191916)">🗑</button>
+        </div>
+      </div>
+    </div><div class="list-item">
+      <div class="item-left">
+        <span class="badge fijo">Fijo</span>
+        
+        
+        <span class="item-desc">Internet</span>
+        <span class="tag">May Q2</span>
+        <span class="tag">Servicios públicos</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$130.000</div>
+          <div style="font-size:11px;color:var(--text3)">Vence: 2026-05-28</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;fijos&#39;,1779926184048,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;fijos&#39;,1779926184048)">✓ Pagar</button>
+              
+          <button class="btn sm danger" onclick="eliminar(&#39;fijos&#39;,1779926184048)">🗑</button>
+        </div>
+      </div>
+    </div><div class="list-item">
+      <div class="item-left">
+        <span class="badge fijo">Fijo</span>
+        
+        
+        <span class="item-desc">Celular</span>
+        <span class="tag">May Q2</span>
+        <span class="tag">Servicios públicos</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$70.000</div>
+          <div style="font-size:11px;color:var(--text3)">Vence: 2026-06-05</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;fijos&#39;,1779926444810,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;fijos&#39;,1779926444810)">✓ Pagar</button>
+              
+          <button class="btn sm danger" onclick="eliminar(&#39;fijos&#39;,1779926444810)">🗑</button>
+        </div>
+      </div>
+    </div></div>
+      </div>
+    </div>
+
+    <!-- VARIABLES -->
+    <div id="page-variables" class="page">
+      <div class="page-title">Gastos variables</div>
+      <p class="page-sub">Gastos del día a día que cambian cada quincena</p>
+      <div class="form-section">
+        <div class="form-title">Nuevo gasto variable</div>
+        <div class="form-row c3">
+          <div class="field">
+            <label>Descripción</label>
+            <div class="ac-wrap">
+              <input type="text" id="var-desc" placeholder="Escribe o selecciona uno guardado…" autocomplete="off" oninput="acFiltrar(&#39;var&#39;)" onfocus="acFiltrar(&#39;var&#39;)" onkeydown="acTecla(event,&#39;var&#39;)">
+              <div class="ac-dropdown" id="var-ac"><div class="ac-item" data-idx="0" onmousedown="acSeleccionar(event,&#39;var&#39;,&#39;Flacucho baldosa&#39;)" onmouseover="acHover(&#39;var&#39;,0)">
+      <span class="ac-item-name">Flacucho baldosa</span>
+      <span class="ac-item-cat">Otro variable</span>
+      <span class="ac-item-meta">$500.000</span>
+    </div></div>
+            </div>
+            <span class="ac-hint">💡 Selecciona uno guardado para registrarlo al instante en la quincena elegida</span>
+          </div>
+          <div class="field"><label>Monto (COP $)</label><input type="number" id="var-monto" placeholder="0" min="0"></div>
+          <div class="field"><label>Fecha</label><input type="date" id="var-fecha"></div>
+        </div>
+        <div class="form-row c2">
+          <div class="field"><label>Quincena</label><select id="var-quincena"><option value="2026-04-1">Abril 2026 – Q1 (1–15)</option><option value="2026-04-2">Abril 2026 – Q2 (16–30)</option><option value="2026-05-1">Mayo 2026 – Q1 (1–15)</option><option value="2026-05-2">Mayo 2026 – Q2 (16–31)</option><option value="2026-06-1">Junio 2026 – Q1 (1–15)</option><option value="2026-06-2">Junio 2026 – Q2 (16–30)</option><option value="2026-07-1">Julio 2026 – Q1 (1–15)</option><option value="2026-07-2">Julio 2026 – Q2 (16–31)</option><option value="2026-08-1">Agosto 2026 – Q1 (1–15)</option><option value="2026-08-2">Agosto 2026 – Q2 (16–31)</option><option value="2026-09-1">Sep 2026 – Q1 (1–15)</option><option value="2026-09-2">Sep 2026 – Q2 (16–30)</option><option value="2026-10-1">Oct 2026 – Q1 (1–15)</option><option value="2026-10-2">Oct 2026 – Q2 (16–31)</option><option value="2026-11-1">Nov 2026 – Q1 (1–15)</option><option value="2026-11-2">Nov 2026 – Q2 (16–30)</option><option value="2026-12-1">Dic 2026 – Q1 (1–15)</option><option value="2026-12-2">Dic 2026 – Q2 (16–31)</option></select></div>
+          <div class="field"><label>Categoría</label>
+            <select id="var-cat">
+              <option>Alimentación / Mercado</option><option>Transporte</option>
+              <option>Salud / Medicamentos</option><option>Entretenimiento</option>
+              <option>Ropa / Calzado</option><option>Restaurantes</option>
+              <option>Hogar / Aseo</option><option>Otro variable</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn primary" onclick="agregarVariable()">+ Agregar gasto variable nuevo</button>
+      </div>
+      <div class="list-section">
+        <div class="list-header">Gastos variables registrados <span id="var-total" style="font-family:&#39;DM Mono&#39;;font-size:13px;color:var(--amber);">$1.705.000</span></div>
+        <div id="variables-list"><div class="list-item">
+      <div class="item-left">
+        <span class="badge variable">Variable</span>
+        
+        
+        <span class="item-desc">Herick H</span>
+        <span class="tag">May Q2</span>
+        <span class="tag">Entretenimiento</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$80.000</div>
+          <div style="font-size:11px;color:var(--text3)">2026-05-30</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;variables&#39;,1779932145269,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;variables&#39;,1779932145269)">✓ Pagar</button>
+              
+          <button class="btn sm danger" onclick="eliminar(&#39;variables&#39;,1779932145269)">🗑</button>
+        </div>
+      </div>
+    </div><div class="list-item">
+      <div class="item-left">
+        <span class="badge variable">Variable</span>
+        
+        
+        <span class="item-desc">F. Castro</span>
+        <span class="tag">May Q2</span>
+        <span class="tag">Ropa / Calzado</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$285.000</div>
+          <div style="font-size:11px;color:var(--text3)">2026-05-30</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;variables&#39;,1779932114402,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;variables&#39;,1779932114402)">✓ Pagar</button>
+              
+          <button class="btn sm danger" onclick="eliminar(&#39;variables&#39;,1779932114402)">🗑</button>
+        </div>
+      </div>
+    </div><div class="list-item">
+      <div class="item-left">
+        <span class="badge variable">Variable</span>
+        
+        
+        <span class="item-desc">AirBNB Envigado</span>
+        <span class="tag">May Q2</span>
+        <span class="tag">Otro variable</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$600.000</div>
+          <div style="font-size:11px;color:var(--text3)">2026-05-29</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;variables&#39;,1779926875379,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;variables&#39;,1779926875379)">✓ Pagar</button>
+              
+          <button class="btn sm danger" onclick="eliminar(&#39;variables&#39;,1779926875379)">🗑</button>
+        </div>
+      </div>
+    </div><div class="list-item">
+      <div class="item-left">
+        <span class="badge variable">Variable</span>
+        
+        
+        <span class="item-desc">Flacucho baldosa</span>
+        <span class="tag">May Q2</span>
+        <span class="tag">Otro variable</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$500.000</div>
+          <div style="font-size:11px;color:var(--text3)">2026-05-29</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;variables&#39;,1779926844263,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;variables&#39;,1779926844263)">✓ Pagar</button>
+              
+          <button class="btn sm danger" onclick="eliminar(&#39;variables&#39;,1779926844263)">🗑</button>
+        </div>
+      </div>
+    </div><div class="list-item">
+      <div class="item-left">
+        <span class="badge variable">Variable</span>
+        
+        
+        <span class="item-desc">Matas</span>
+        <span class="tag">May Q2</span>
+        <span class="tag">Hogar / Aseo</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">$240.000</div>
+          <div style="font-size:11px;color:var(--text3)">2026-05-28</div>
+        </div>
+        <div class="acciones">
+          <button class="btn sm aplazar" onclick="aplazarGasto(&#39;variables&#39;,1779926142265,&#39;2026-05-2&#39;)">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado(&#39;variables&#39;,1779926142265)">✓ Pagar</button>
+              
+          <button class="btn sm danger" onclick="eliminar(&#39;variables&#39;,1779926142265)">🗑</button>
+        </div>
+      </div>
+    </div></div>
+      </div>
+    </div>
+
+    <!-- MENSUAL -->
+    <div id="page-mensual" class="page">
+      <div class="page-title">Vista mensual</div>
+      <p class="page-sub">Consolidado del mes completo con ambas quincenas</p>
+      <div class="period-row">
+        <label>Mes:</label>
+        <select id="mes-sel" onchange="renderMensual()"><option value="2026-04">Abril 2026</option><option value="2026-05">Mayo 2026</option><option value="2026-06">Junio 2026</option><option value="2026-07">Julio 2026</option><option value="2026-08">Agosto 2026</option><option value="2026-09">Septiembre 2026</option><option value="2026-10">Octubre 2026</option><option value="2026-11">Noviembre 2026</option><option value="2026-12">Diciembre 2026</option></select>
+      </div>
+      <div class="metric-grid" id="metrics-mes">
+    <div class="metric-card"><div class="mlabel">Ingresos del mes</div><div class="mval g">$4.800.000</div></div>
+    <div class="metric-card"><div class="mlabel">Total fijos</div><div class="mval r">$1.945.000</div></div>
+    <div class="metric-card"><div class="mlabel">Total variables</div><div class="mval a">$1.705.000</div></div>
+    <div class="metric-card"><div class="mlabel">Saldo final del mes</div><div class="mval b">$1.150.000</div></div></div>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title">Comparativa quincenal</div>
+          <div class="chart-wrap" style="height:220px"><canvas id="chartMensual" role="img" aria-label="Comparativa quincenal" style="box-sizing: border-box; display: block; height: 220px; width: 398px;" width="796" height="440"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Gastos por categoría</div>
+          <div class="chart-wrap" style="height:220px"><canvas id="chartCatMes" role="img" aria-label="Gastos por categoría" style="box-sizing: border-box; display: block; height: 220px; width: 398px;" width="796" height="440"></canvas></div>
+          <div class="legend" id="cat-legend"><span><span class="legend-dot" style="background:#2d6a2d"></span>Otro fijo: $650.000</span><span><span class="legend-dot" style="background:#1a4f8a"></span>Crédito / Deuda: $2.965.000</span><span><span class="legend-dot" style="background:#9b3a1a"></span>Servicios públicos: $200.000</span><span><span class="legend-dot" style="background:#7a4a08"></span>Hogar / Aseo: $240.000</span><span><span class="legend-dot" style="background:#9b3ab5"></span>Otro variable: $1.100.000</span><span><span class="legend-dot" style="background:#0F6E56"></span>Ropa / Calzado: $285.000</span><span><span class="legend-dot" style="background:#8a2d4a"></span>Entretenimiento: $80.000</span></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toast" id="toast">⬇ CSV exportado</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────
+let db = { ingresos:[], fijos:[], variables:[] };
+
+const PERIODOS = [
+  {v:'2026-04-1',l:'Abril 2026 – Q1 (1–15)'},{v:'2026-04-2',l:'Abril 2026 – Q2 (16–30)'},
+  {v:'2026-05-1',l:'Mayo 2026 – Q1 (1–15)'},{v:'2026-05-2',l:'Mayo 2026 – Q2 (16–31)'},
+  {v:'2026-06-1',l:'Junio 2026 – Q1 (1–15)'},{v:'2026-06-2',l:'Junio 2026 – Q2 (16–30)'},
+  {v:'2026-07-1',l:'Julio 2026 – Q1 (1–15)'},{v:'2026-07-2',l:'Julio 2026 – Q2 (16–31)'},
+  {v:'2026-08-1',l:'Agosto 2026 – Q1 (1–15)'},{v:'2026-08-2',l:'Agosto 2026 – Q2 (16–31)'},
+  {v:'2026-09-1',l:'Sep 2026 – Q1 (1–15)'},{v:'2026-09-2',l:'Sep 2026 – Q2 (16–30)'},
+  {v:'2026-10-1',l:'Oct 2026 – Q1 (1–15)'},{v:'2026-10-2',l:'Oct 2026 – Q2 (16–31)'},
+  {v:'2026-11-1',l:'Nov 2026 – Q1 (1–15)'},{v:'2026-11-2',l:'Nov 2026 – Q2 (16–30)'},
+  {v:'2026-12-1',l:'Dic 2026 – Q1 (1–15)'},{v:'2026-12-2',l:'Dic 2026 – Q2 (16–31)'},
+];
+const MESES = [
+  {v:'2026-04',l:'Abril 2026'},{v:'2026-05',l:'Mayo 2026'},{v:'2026-06',l:'Junio 2026'},
+  {v:'2026-07',l:'Julio 2026'},{v:'2026-08',l:'Agosto 2026'},{v:'2026-09',l:'Septiembre 2026'},
+  {v:'2026-10',l:'Octubre 2026'},{v:'2026-11',l:'Noviembre 2026'},{v:'2026-12',l:'Diciembre 2026'},
+];
+const PALETA = ['#2d6a2d','#1a4f8a','#9b3a1a','#7a4a08','#9b3ab5','#0F6E56','#8a2d4a','#3a5a8a'];
+
+// ─── INIT ────────────────────────────────────────────────────────────
+function initSelects() {
+  const opts = PERIODOS.map(p=>`<option value="${p.v}">${p.l}</option>`).join('');
+  ['ing-quincena','fijo-quincena','var-quincena','periodo-resumen'].forEach(id=>{
+    const el=document.getElementById(id); if(!el)return;
+    el.innerHTML=opts; el.value='2026-05-2';
+  });
+  document.getElementById('mes-sel').innerHTML = MESES.map(m=>`<option value="${m.v}">${m.l}</option>`).join('');
+  document.getElementById('mes-sel').value='2026-05';
+}
+
+function cargarLocal(){ try{ const s=localStorage.getItem('cfq_data'); if(s) db=JSON.parse(s); }catch(e){} }
+function guardarLocal(){ try{ localStorage.setItem('cfq_data',JSON.stringify(db)); }catch(e){} }
+
+// ─── UTILS ───────────────────────────────────────────────────────────
+function fmt(n){ return '$'+Math.round(n).toLocaleString('es-CO'); }
+
+function qShort(q){
+  if(!q)return'';
+  const [y,m,p]=q.split('-');
+  const mn=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return mn[parseInt(m)]+' Q'+p;
+}
+
+function siguienteQ(q){
+  const [y,m,p]=q.split('-');
+  const anio=parseInt(y), mes=parseInt(m), parte=parseInt(p);
+  if(parte===1) return `${anio}-${String(mes).padStart(2,'0')}-2`;
+  const nm=mes===12?1:mes+1, ny=mes===12?anio+1:anio;
+  return `${ny}-${String(nm).padStart(2,'0')}-1`;
+}
+
+function calcQ(q){
+  const ing=db.ingresos.filter(i=>i.quincena===q).reduce((s,i)=>s+i.monto,0);
+  const fij=db.fijos.filter(i=>i.quincena===q&&i.estado!=='aplazado').reduce((s,i)=>s+i.monto,0);
+  const varb=db.variables.filter(i=>i.quincena===q&&i.estado!=='aplazado').reduce((s,i)=>s+i.monto,0);
+  return {ing,fij,varb,total:fij+varb,saldo:ing-fij-varb};
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ─── NAVEGACIÓN ──────────────────────────────────────────────────────
+function showPage(p,el){
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  if(el) el.classList.add('active');
+  if(p==='resumen') renderResumen();
+  if(p==='ingresos') renderIngresos();
+  if(p==='fijos') renderFijos();
+  if(p==='variables') renderVariables();
+  if(p==='mensual') renderMensual();
+}
+
+// ─── RESUMEN ─────────────────────────────────────────────────────────
+let chartDonut,chartBar,chartMensual,chartCatMes;
+
+function renderResumen(){
+  const q=document.getElementById('periodo-resumen').value;
+  const {ing,fij,varb,saldo}=calcQ(q);
+  const total=fij+varb;
+  const pct=ing>0?Math.round((total/ing)*100):0;
+  const pc=pct>90?'#c0392b':pct>70?'#d68910':'#2d6a2d';
+
+  document.getElementById('metrics-resumen').innerHTML=`
+    <div class="metric-card"><div class="mlabel">💰 Ingresos</div><div class="mval g">${fmt(ing)}</div></div>
+    <div class="metric-card"><div class="mlabel">🏠 Gastos fijos</div><div class="mval r">${fmt(fij)}</div></div>
+    <div class="metric-card"><div class="mlabel">🛒 Gastos variables</div><div class="mval a">${fmt(varb)}</div></div>
+    <div class="metric-card"><div class="mlabel">💳 Saldo neto</div><div class="mval ${saldo>=0?'b':'r'}">${fmt(saldo)}</div></div>
+    <div class="metric-card" style="grid-column:1/-1">
+      <div class="mlabel">Comprometido del ingreso — <strong style="color:${pc}">${pct}%</strong></div>
+      <div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:${Math.min(pct,100)}%;background:${pc}"></div></div></div>
+    </div>`;
+
+  // Lista compromisos (excluir aplazados)
+  const items=[
+    ...db.fijos.filter(i=>i.quincena===q&&i.estado!=='aplazado').map(i=>({...i,tipo:'fijo'})),
+    ...db.variables.filter(i=>i.quincena===q&&i.estado!=='aplazado').map(i=>({...i,tipo:'variable'}))
+  ].sort((a,b)=>{
+    const ord=x=>x.estado==='pagado'?1:0;
+    if(ord(a)!==ord(b)) return ord(a)-ord(b);
+    return (a.fecha||'zzz')>(b.fecha||'zzz')?1:-1;
+  });
+
+  const recApl=items.filter(c=>c.aplazadoDe);
+  const aplMsg=recApl.length?`<div style="background:var(--amber-bg);color:var(--amber);font-size:13px;padding:10px 1.25rem;border-bottom:1px solid var(--border);">⏩ <strong>${recApl.length}</strong> gasto(s) recibido(s) aplazados de la quincena anterior</div>`:'';
+
+  const pendTotal=items.filter(c=>c.estado!=='pagado').reduce((s,c)=>s+c.monto,0);
+  document.getElementById('compromiso-total').textContent=items.length?fmt(pendTotal):'';
+
+  document.getElementById('compromisos-list').innerHTML=aplMsg+(items.length?items.map(c=>{
+    const pag=c.estado==='pagado';
+    return `<div class="list-item${pag?' pagado':''}">
+      <div class="item-left">
+        <span class="badge ${c.tipo}">${c.tipo==='fijo'?'Fijo':'Variable'}</span>
+        ${pag?'<span class="badge pagado">✅ Pagado</span>':''}
+        ${c.aplazadoDe?'<span class="badge apl-rec">⏩ Aplazado</span>':''}
+        <span class="item-desc">${c.desc}</span>
+        ${c.cat?`<span class="tag">${c.cat}</span>`:''}
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">${fmt(c.monto)}</div>
+          ${c.fecha?`<div style="font-size:11px;color:var(--text3)">📅 ${c.fecha}</div>`:''}
+        </div>
+        <div class="acciones">
+          ${!pag
+            ?`<button class="btn sm aplazar" onclick="aplazarGasto('${c.tipo}',${c.id},'${q}')">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado('${c.tipo}',${c.id})">✓ Pagar</button>
+              ${c.aplazadoDe?`<button class="btn sm undo-apl" onclick="deshacerAplazar('${c.tipo}',${c.id})">↩ Deshacer aplazar</button>`:''}`
+            :`<button class="btn sm unpay" onclick="togglePagado('${c.tipo}',${c.id})">↩ Deshacer</button>`
+          }
+        </div>
+      </div>
+    </div>`}).join(''):'<div class="empty">Sin compromisos en esta quincena</div>');
+
+  // Donut
+  if(chartDonut) chartDonut.destroy();
+  const hd=fij>0||varb>0||saldo>0;
+  const sp=Math.max(saldo,0);
+  chartDonut=new Chart(document.getElementById('chartDonut').getContext('2d'),{
+    type:'doughnut',
+    data:{labels:['Gastos fijos','Gastos variables','Disponible'],
+      datasets:[{data:hd?[fij,varb,sp]:[1],backgroundColor:hd?['#1a4f8a','#7a4a08','#2d6a2d']:['#ddd'],borderWidth:3,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'65%'}
+  });
+  document.getElementById('donut-legend').innerHTML=hd
+    ?[['#1a4f8a','Fijos',fij],['#7a4a08','Variables',varb],['#2d6a2d','Disponible',sp]].map(([c,l,v])=>`<span><span class="legend-dot" style="background:${c}"></span>${l}: ${fmt(v)}</span>`).join(''):'';
+
+  // Bar
+  if(chartBar) chartBar.destroy();
+  chartBar=new Chart(document.getElementById('chartBar').getContext('2d'),{
+    type:'bar',
+    data:{labels:['Ingresos','Fijos','Variables','Saldo'],
+      datasets:[{data:[ing,fij,varb,saldo],backgroundColor:['#2d6a2d','#1a4f8a','#7a4a08',saldo>=0?'#1a4f8a':'#9b2a2a'],borderRadius:6}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{y:{ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k',font:{size:11}},grid:{color:'rgba(0,0,0,0.05)'}},x:{ticks:{font:{size:11}}}}}
+  });
+}
+
+// ─── INGRESOS ────────────────────────────────────────────────────────
+function agregarIngreso(){
+  const desc=document.getElementById('ing-desc').value.trim();
+  const monto=parseFloat(document.getElementById('ing-monto').value);
+  const fecha=document.getElementById('ing-fecha').value;
+  const quincena=document.getElementById('ing-quincena').value;
+  if(!desc||!monto||monto<=0){toast('Completa descripción y monto');return;}
+  db.ingresos.push({id:Date.now(),desc,monto,fecha,quincena});
+  document.getElementById('ing-desc').value='';
+  document.getElementById('ing-monto').value='';
+  guardarLocal(); renderIngresos(); toast('✓ Ingreso agregado');
+}
+
+function renderIngresos(){
+  const el=document.getElementById('ingresos-list');
+  const total=db.ingresos.reduce((s,i)=>s+i.monto,0);
+  document.getElementById('ing-total').textContent=db.ingresos.length?fmt(total):'';
+  el.innerHTML=db.ingresos.length
+    ?[...db.ingresos].reverse().map(i=>`
+      <div class="list-item">
+        <div class="item-left">
+          <span class="badge ingreso">Ingreso</span>
+          <span>${i.desc}</span>
+          <span class="tag">${qShort(i.quincena)}</span>
+        </div>
+        <div class="item-right">
+          <div><div class="amount" style="color:var(--green)">${fmt(i.monto)}</div>
+          ${i.fecha?`<div style="font-size:11px;color:var(--text3)">${i.fecha}</div>`:''}</div>
+          <button class="btn sm danger" onclick="eliminar('ingresos',${i.id})">🗑</button>
+        </div>
+      </div>`).join('')
+    :'<div class="empty">Sin ingresos registrados aún</div>';
+}
+
+// ─── GASTOS FIJOS ────────────────────────────────────────────────────
+function agregarFijo(){
+  const desc=document.getElementById('fijo-desc').value.trim();
+  const monto=parseFloat(document.getElementById('fijo-monto').value);
+  const fecha=document.getElementById('fijo-fecha').value;
+  const quincena=document.getElementById('fijo-quincena').value;
+  const cat=document.getElementById('fijo-cat').value;
+  if(!desc||!monto||monto<=0){toast('Completa descripción y monto');return;}
+  db.fijos.push({id:Date.now(),desc,monto,fecha,quincena,cat,estado:'pendiente'});
+  document.getElementById('fijo-desc').value='';
+  document.getElementById('fijo-monto').value='';
+  guardarLocal(); renderFijos(); toast('✓ Gasto fijo agregado');
+}
+
+function renderFijos(){
+  const el=document.getElementById('fijos-list');
+  const total=db.fijos.filter(i=>i.estado!=='aplazado').reduce((s,i)=>s+i.monto,0);
+  document.getElementById('fijo-total').textContent=db.fijos.length?fmt(total):'';
+  const items=[...db.fijos].filter(i=>i.estado!=='aplazado').sort((a,b)=>(a.fecha||'zzz')>(b.fecha||'zzz')?1:-1);
+  el.innerHTML=items.length?items.map(i=>{
+    const pag=i.estado==='pagado';
+    return `<div class="list-item${pag?' pagado':''}">
+      <div class="item-left">
+        <span class="badge fijo">Fijo</span>
+        ${pag?'<span class="badge pagado">✅ Pagado</span>':''}
+        ${i.aplazadoDe?'<span class="badge apl-rec">⏩ Aplazado</span>':''}
+        <span class="item-desc">${i.desc}</span>
+        <span class="tag">${qShort(i.quincena)}</span>
+        <span class="tag">${i.cat}</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">${fmt(i.monto)}</div>
+          ${i.fecha?`<div style="font-size:11px;color:var(--text3)">Vence: ${i.fecha}</div>`:''}
+        </div>
+        <div class="acciones">
+          ${!pag
+            ?`<button class="btn sm aplazar" onclick="aplazarGasto('fijos',${i.id},'${i.quincena}')">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado('fijos',${i.id})">✓ Pagar</button>
+              ${i.aplazadoDe?`<button class="btn sm undo-apl" onclick="deshacerAplazar('fijos',${i.id})">↩ Deshacer aplazar</button>`:''}`
+            :`<button class="btn sm unpay" onclick="togglePagado('fijos',${i.id})">↩ Deshacer</button>`
+          }
+          <button class="btn sm danger" onclick="eliminar('fijos',${i.id})">🗑</button>
+        </div>
+      </div>
+    </div>`;}).join('')
+  :'<div class="empty">Sin gastos fijos registrados aún</div>';
+}
+
+// ─── GASTOS VARIABLES ────────────────────────────────────────────────
+function agregarVariable(){
+  const desc=document.getElementById('var-desc').value.trim();
+  const monto=parseFloat(document.getElementById('var-monto').value);
+  const fecha=document.getElementById('var-fecha').value;
+  const quincena=document.getElementById('var-quincena').value;
+  const cat=document.getElementById('var-cat').value;
+  if(!desc||!monto||monto<=0){toast('Completa descripción y monto');return;}
+  db.variables.push({id:Date.now(),desc,monto,fecha,quincena,cat,estado:'pendiente'});
+  document.getElementById('var-desc').value='';
+  document.getElementById('var-monto').value='';
+  guardarLocal(); renderVariables(); toast('✓ Gasto variable agregado');
+}
+
+function renderVariables(){
+  const el=document.getElementById('variables-list');
+  const total=db.variables.filter(i=>i.estado!=='aplazado').reduce((s,i)=>s+i.monto,0);
+  document.getElementById('var-total').textContent=db.variables.length?fmt(total):'';
+  const items=[...db.variables].filter(i=>i.estado!=='aplazado').reverse();
+  el.innerHTML=items.length?items.map(i=>{
+    const pag=i.estado==='pagado';
+    return `<div class="list-item${pag?' pagado':''}">
+      <div class="item-left">
+        <span class="badge variable">Variable</span>
+        ${pag?'<span class="badge pagado">✅ Pagado</span>':''}
+        ${i.aplazadoDe?'<span class="badge apl-rec">⏩ Aplazado</span>':''}
+        <span class="item-desc">${i.desc}</span>
+        <span class="tag">${qShort(i.quincena)}</span>
+        <span class="tag">${i.cat}</span>
+      </div>
+      <div class="item-right">
+        <div style="text-align:right">
+          <div class="amount">${fmt(i.monto)}</div>
+          ${i.fecha?`<div style="font-size:11px;color:var(--text3)">${i.fecha}</div>`:''}
+        </div>
+        <div class="acciones">
+          ${!pag
+            ?`<button class="btn sm aplazar" onclick="aplazarGasto('variables',${i.id},'${i.quincena}')">⏩ Aplazar</button>
+              <button class="btn sm check" onclick="togglePagado('variables',${i.id})">✓ Pagar</button>
+              ${i.aplazadoDe?`<button class="btn sm undo-apl" onclick="deshacerAplazar('variables',${i.id})">↩ Deshacer aplazar</button>`:''}`
+            :`<button class="btn sm unpay" onclick="togglePagado('variables',${i.id})">↩ Deshacer</button>`
+          }
+          <button class="btn sm danger" onclick="eliminar('variables',${i.id})">🗑</button>
+        </div>
+      </div>
+    </div>`;}).join('')
+  :'<div class="empty">Sin gastos variables registrados aún</div>';
+}
+
+// ─── ACCIONES DE PAGO Y APLAZAR ──────────────────────────────────────
+function togglePagado(tipo,id){
+  const item=db[tipo].find(i=>i.id===id); if(!item)return;
+  item.estado=item.estado==='pagado'?'pendiente':'pagado';
+  guardarLocal(); renderResumen();
+  if(tipo==='fijos') renderFijos();
+  if(tipo==='variables') renderVariables();
+  toast(item.estado==='pagado'?'✅ Marcado como pagado':'↩ Marcado como pendiente');
+}
+
+function aplazarGasto(tipo,id,qActual){
+  const item=db[tipo].find(i=>i.id===id); if(!item)return;
+  const sigQ=siguienteQ(qActual);
+  const copiaId=Date.now();
+  item.estado='aplazado';
+  item.copiaId=copiaId;
+  db[tipo].push({...item,id:copiaId,quincena:sigQ,estado:'pendiente',aplazadoDe:qActual,originalId:id,copiaId:undefined});
+  guardarLocal();
+  toast(`⏩ Movido a ${qShort(sigQ)}`);
+  renderResumen();
+  if(tipo==='fijos') renderFijos();
+  if(tipo==='variables') renderVariables();
+}
+
+function deshacerAplazar(tipo,copiaId){
+  const copia=db[tipo].find(i=>i.id===copiaId); if(!copia||!copia.originalId)return;
+  const original=db[tipo].find(i=>i.id===copia.originalId);
+  if(original){ original.estado='pendiente'; delete original.copiaId; }
+  db[tipo]=db[tipo].filter(i=>i.id!==copiaId);
+  guardarLocal();
+  toast('↩ Devuelto a su quincena original');
+  renderResumen();
+  if(tipo==='fijos') renderFijos();
+  if(tipo==='variables') renderVariables();
+}
+
+function eliminar(tipo,id){
+  db[tipo]=db[tipo].filter(i=>i.id!==id);
+  guardarLocal();
+  if(tipo==='ingresos') renderIngresos();
+  if(tipo==='fijos') renderFijos();
+  if(tipo==='variables') renderVariables();
+  toast('Registro eliminado');
+}
+
+// ─── MENSUAL ─────────────────────────────────────────────────────────
+function renderMensual(){
+  const mes=document.getElementById('mes-sel').value;
+  const q1=mes+'-1', q2=mes+'-2';
+  const c1=calcQ(q1), c2=calcQ(q2);
+  const tI=c1.ing+c2.ing, tG=c1.total+c2.total, tS=tI-tG;
+  document.getElementById('metrics-mes').innerHTML=`
+    <div class="metric-card"><div class="mlabel">Ingresos del mes</div><div class="mval g">${fmt(tI)}</div></div>
+    <div class="metric-card"><div class="mlabel">Total fijos</div><div class="mval r">${fmt(c1.fij+c2.fij)}</div></div>
+    <div class="metric-card"><div class="mlabel">Total variables</div><div class="mval a">${fmt(c1.varb+c2.varb)}</div></div>
+    <div class="metric-card"><div class="mlabel">Saldo final del mes</div><div class="mval ${tS>=0?'b':'r'}">${fmt(tS)}</div></div>`;
+
+  if(chartMensual) chartMensual.destroy();
+  chartMensual=new Chart(document.getElementById('chartMensual').getContext('2d'),{
+    type:'bar',
+    data:{labels:['Q1','Q2'],datasets:[
+      {label:'Ingresos',data:[c1.ing,c2.ing],backgroundColor:'#2d6a2d',borderRadius:6},
+      {label:'Fijos',data:[c1.fij,c2.fij],backgroundColor:'#1a4f8a',borderRadius:6},
+      {label:'Variables',data:[c1.varb,c2.varb],backgroundColor:'#7a4a08',borderRadius:6}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{font:{size:12}}},y:{ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k',font:{size:11}},grid:{color:'rgba(0,0,0,0.05)'}}}}
+  });
+
+  const todos=[...db.fijos,...db.variables].filter(i=>i.quincena===q1||i.quincena===q2);
+  const cats={};
+  todos.forEach(g=>{cats[g.cat]=(cats[g.cat]||0)+g.monto;});
+  const ks=Object.keys(cats);
+  if(chartCatMes) chartCatMes.destroy();
+  chartCatMes=new Chart(document.getElementById('chartCatMes').getContext('2d'),{
+    type:'doughnut',
+    data:{labels:ks.length?ks:['Sin datos'],datasets:[{data:ks.length?ks.map(k=>cats[k]):[1],backgroundColor:ks.length?PALETA.slice(0,ks.length):['#ddd'],borderWidth:3,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'60%'}
+  });
+  document.getElementById('cat-legend').innerHTML=ks.map((k,i)=>`<span><span class="legend-dot" style="background:${PALETA[i]}"></span>${k}: ${fmt(cats[k])}</span>`).join('');
+}
+
+// ─── EXPORTAR CSV ────────────────────────────────────────────────────
+function exportarCSV(){
+  let csv='Tipo,Descripcion,Monto,Fecha,Quincena,Categoria,Estado\n';
+  db.ingresos.forEach(i=>{csv+=`Ingreso,"${i.desc}",${i.monto},${i.fecha||''},${i.quincena},,\n`;});
+  db.fijos.forEach(i=>{csv+=`Fijo,"${i.desc}",${i.monto},${i.fecha||''},${i.quincena},"${i.cat||''}",${i.estado||''}\n`;});
+  db.variables.forEach(i=>{csv+=`Variable,"${i.desc}",${i.monto},${i.fecha||''},${i.quincena},"${i.cat||''}",${i.estado||''}\n`;});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='control-financiero-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click(); toast('⬇ CSV exportado');
+}
+
+// ─── AUTOCOMPLETE / MEMORIA ──────────────────────────────────────────
+function getMemoria(tipo){
+  const fuente=tipo==='ing'?db.ingresos:tipo==='fijo'?db.fijos:db.variables;
+  const mapa={};
+  fuente.forEach(r=>{
+    const k=r.desc.trim().toLowerCase(); if(!k)return;
+    if(!mapa[k]||r.id>mapa[k].id) mapa[k]=r;
+  });
+  return Object.values(mapa).sort((a,b)=>b.id-a.id);
+}
+
+const acIdx={ing:-1,fijo:-1,var:-1};
+
+function acFiltrar(tipo){
+  const inp=document.getElementById(tipo+'-desc');
+  const dd=document.getElementById(tipo+'-ac');
+  const q=inp.value.trim().toLowerCase();
+  const mem=getMemoria(tipo);
+  const fil=q?mem.filter(r=>r.desc.toLowerCase().includes(q)):mem;
+  if(!fil.length){dd.classList.remove('open');return;}
+  acIdx[tipo]=-1;
+  dd.innerHTML=fil.map((r,i)=>{
+    const m='$'+Math.round(r.monto).toLocaleString('es-CO');
+    const c=r.cat||'';
+    // Escapar comillas en desc para el atributo data
+    const descEsc=r.desc.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return `<div class="ac-item" data-idx="${i}"
+      onmousedown="acSeleccionar(event,'${tipo}','${descEsc}')"
+      onmouseover="acHover('${tipo}',${i})">
+      <span class="ac-item-name">${r.desc}</span>
+      ${c?`<span class="ac-item-cat">${c}</span>`:''}
+      <span class="ac-item-meta">${m}</span>
+    </div>`;
+  }).join('');
+  dd.classList.add('open');
+}
+
+function acHover(tipo,idx){
+  acIdx[tipo]=idx;
+  document.querySelectorAll('#'+tipo+'-ac .ac-item').forEach((el,i)=>el.classList.toggle('focused',i===idx));
+}
+
+function acTecla(e,tipo){
+  const dd=document.getElementById(tipo+'-ac');
+  if(!dd.classList.contains('open'))return;
+  const items=dd.querySelectorAll('.ac-item');
+  if(!items.length)return;
+  if(e.key==='ArrowDown'){
+    e.preventDefault(); acIdx[tipo]=Math.min(acIdx[tipo]+1,items.length-1);
+    items.forEach((el,i)=>el.classList.toggle('focused',i===acIdx[tipo]));
+    items[acIdx[tipo]]?.scrollIntoView({block:'nearest'});
+  } else if(e.key==='ArrowUp'){
+    e.preventDefault(); acIdx[tipo]=Math.max(acIdx[tipo]-1,0);
+    items.forEach((el,i)=>el.classList.toggle('focused',i===acIdx[tipo]));
+    items[acIdx[tipo]]?.scrollIntoView({block:'nearest'});
+  } else if(e.key==='Enter'&&acIdx[tipo]>=0){
+    e.preventDefault();
+    const f=dd.querySelector('.ac-item.focused'); if(f) f.dispatchEvent(new MouseEvent('mousedown'));
+  } else if(e.key==='Escape'){
+    dd.classList.remove('open');
+  }
+}
+
+function acSeleccionar(e,tipo,desc){
+  e.preventDefault();
+  const mem=getMemoria(tipo);
+  const reg=mem.find(r=>r.desc===desc); if(!reg)return;
+  document.getElementById(tipo+'-ac').classList.remove('open');
+
+  const quincena=document.getElementById(tipo+'-quincena').value;
+  const fecha=document.getElementById(tipo+'-fecha').value;
+
+  // Seleccionar categoría si corresponde
+  const catSel=document.getElementById(tipo+'-cat');
+  let cat=reg.cat||'';
+  if(catSel&&reg.cat){
+    const opt=[...catSel.options].find(o=>o.value===reg.cat);
+    if(opt){ catSel.value=reg.cat; cat=reg.cat; }
+  }
+
+  // Registrar directamente
+  if(tipo==='ing'){
+    db.ingresos.push({id:Date.now(),desc:reg.desc,monto:reg.monto,fecha,quincena});
+    guardarLocal(); renderIngresos();
+  } else if(tipo==='fijo'){
+    db.fijos.push({id:Date.now(),desc:reg.desc,monto:reg.monto,fecha,quincena,cat,estado:'pendiente'});
+    guardarLocal(); renderFijos();
+  } else {
+    db.variables.push({id:Date.now(),desc:reg.desc,monto:reg.monto,fecha,quincena,cat,estado:'pendiente'});
+    guardarLocal(); renderVariables();
+  }
+
+  document.getElementById(tipo+'-desc').value='';
+  document.getElementById(tipo+'-monto').value='';
+  toast(`✓ "${reg.desc}" registrado — ${qShort(quincena)}`);
+}
+
+// Cerrar dropdown al clic fuera
+document.addEventListener('click',e=>{
+  ['ing','fijo','var'].forEach(t=>{
+    const dd=document.getElementById(t+'-ac');
+    if(dd&&!e.target.closest('#'+t+'-ac')&&e.target.id!==t+'-desc') dd.classList.remove('open');
+  });
+});
+
+// ─── ARRANQUE ────────────────────────────────────────────────────────
+cargarLocal();
+initSelects();
+document.getElementById('ing-fecha').valueAsDate=new Date();
+document.getElementById('fijo-fecha').valueAsDate=new Date();
+document.getElementById('var-fecha').valueAsDate=new Date();
+renderResumen();
+</script>
+
+
+</body></html>
